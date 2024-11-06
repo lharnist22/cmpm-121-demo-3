@@ -84,8 +84,8 @@ function spawnCache(i: number, j: number) {
     popupDiv.querySelector<HTMLButtonElement>("#deposit")!.addEventListener(
       "click",
       () => {
-        playerPoints--;
         pointValue++;
+        playerPoints--;
         popupDiv.querySelector<HTMLSpanElement>("#value")!.innerHTML =
           pointValue.toString();
         if (playerPoints == 0) {

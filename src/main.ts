@@ -39,7 +39,7 @@ playerMarker.addTo(map);
 
 let playerPoints = 0;
 const statusPanel = document.querySelector<HTMLDivElement>("#statusPanel")!;
-statusPanel.innerHTML = "No points yet...";
+statusPanel.innerHTML = "You have 0 points";
 
 function spawnCache(i: number, j: number) {
   const origin = OAKES_CLASSROOM;
@@ -62,15 +62,41 @@ function spawnCache(i: number, j: number) {
       <button id="collect">Collect</button>
       <button id="deposit">Deposit</button>`;
 
+    // Collect Button and updating text for collection
     popupDiv.querySelector<HTMLButtonElement>("#collect")!.addEventListener(
       "click",
       () => {
         pointValue--;
+        playerPoints++;
         popupDiv.querySelector<HTMLSpanElement>("#value")!.innerHTML =
           pointValue.toString();
-        playerPoints++;
-        statusPanel.innerHTML =
-          `You have ${playerPoints} points. Collect more around the map and deposit them too!`;
+        if (playerPoints == 1) {
+          statusPanel.innerHTML =
+            `You have ${playerPoints} point. Collect more around the map and deposit them too!`;
+        } else {
+          statusPanel.innerHTML =
+            `You have ${playerPoints} points. Collect more around the map and deposit them too!`;
+        }
+      },
+    );
+
+    // Deposit Button and updating text for deposit
+    popupDiv.querySelector<HTMLButtonElement>("#deposit")!.addEventListener(
+      "click",
+      () => {
+        playerPoints--;
+        pointValue++;
+        popupDiv.querySelector<HTMLSpanElement>("#value")!.innerHTML =
+          pointValue.toString();
+        if (playerPoints == 0) {
+          statusPanel.innerHTML = `You have ${playerPoints} points.`;
+        } else if (playerPoints == 1) {
+          statusPanel.innerHTML =
+            `You have ${playerPoints} point. Collect more around the map and deposit them too!`;
+        } else {
+          statusPanel.innerHTML =
+            `You have ${playerPoints} points. Collect more around the map and deposit them too!`;
+        }
       },
     );
 

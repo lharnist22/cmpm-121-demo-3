@@ -1,5 +1,8 @@
 import leaflet from "leaflet";
 
+//test commit comment
+console.log("test\n");
+
 
 // Style sheets
 import "leaflet/dist/leaflet.css";

@@ -1,5 +1,8 @@
 import leaflet from "leaflet";
 
+//test commit comment
+console.log("test\n");
+
 
 // Style sheets
 import "leaflet/dist/leaflet.css";
@@ -58,7 +61,7 @@ statusPanel.innerHTML = "You have 0 points";
 
 // Cache Loactions
 class cacheLocations {
-  private static cacheLocationMap: Map<string, leaflet.latLng> = new Map();
+  private static cacheLocationMap: Map<string, leaflet.LatLng> = new Map();
   public static getCacheLocation(lat: number, lng: number): leaflet.LatLng {
     const key = `${lat}, ${lng}`;
     if (!cacheLocations.cacheLocationMap.has(key)) {

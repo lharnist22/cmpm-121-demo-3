@@ -101,7 +101,6 @@ function spawnCache(i: number, j: number) {
   rect.addTo(map);
 
   //const coin = new Coin(lat, lng, Math.floor(luck([i, j, "initialValue"].toString()) * 100));
-
   rect.bindPopup(() => {
     // Each cache has a random point value, mutable by the player
     let pointValue = Math.floor(luck([i, j, "initialValue"].toString()) * 100);
@@ -152,6 +151,14 @@ function spawnCache(i: number, j: number) {
     return popupDiv;
   });
 }
+
+/*function updateStatusPanel() {
+  if (playerPoints == 1) {
+    statusPanel.innerHTML = `You have ${playerPoints} point. Collect more around the map and deposit them too!`;
+  } else {
+    statusPanel.innerHTML = `You have ${playerPoints} points. Collect more around the map and deposit them too!`;
+  }
+  }*/
 
 for (let i = -NEIGHBORHOOD_SIZE; i < NEIGHBORHOOD_SIZE; i++) {
   for (let j = -NEIGHBORHOOD_SIZE; j < NEIGHBORHOOD_SIZE; j++) {

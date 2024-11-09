@@ -45,7 +45,7 @@ playerMarker.addTo(map);
 let playerPoints = 0;
 const statusPanel = document.querySelector<HTMLDivElement>("#statusPanel")!;
 
-statusPanel.innerHTML = "You have 0 point";
+statusPanel.innerHTML = "You have 0 points";
 
 // Cache Loactions
 /*class cacheLocations {

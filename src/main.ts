@@ -45,7 +45,7 @@ const statusPanel = document.querySelector<HTMLDivElement>("#statusPanel")!;
 statusPanel.innerHTML = "You have 0 points";
 
 // Cache Loactions
-/*class cacheLocations {
+class cacheLocations {
   private static cacheLocationMap: Map<string, leaflet.latLng> = new Map();
   public static getCacheLocation(lat: number, lng: number): leaflet.LatLng {
     const key = `${lat}, ${lng}`;
@@ -56,7 +56,7 @@ statusPanel.innerHTML = "You have 0 points";
     }
     return cacheLocations.cacheLocationMap.get(key)!;
   }
-}*/
+}
 
 // Coin class and constructor
 /*class Coin {
@@ -83,8 +83,15 @@ private randomID(lat: number, lng: number): string{
 }
 }*/
 
+// Rewrite this for appropriate class of cacheLocations (CHANGE THIS LATER!)
 function spawnCache(i: number, j: number) {
   const origin = OAKES_CLASSROOM;
+  const lat = origin.lat + i * TILE_DEGREES;
+  const lng = origin.lng + j * TILE_DEGREES;
+
+  const cacheLocation = cacheLocations.getCacheLocation(lat, lng);
+  console.log(cacheLocation);
+
   const bounds = leaflet.latLngBounds([
     [origin.lat + i * TILE_DEGREES, origin.lng + j * TILE_DEGREES],
     [origin.lat + (i + 1) * TILE_DEGREES, origin.lng + (j + 1) * TILE_DEGREES],
@@ -92,6 +99,8 @@ function spawnCache(i: number, j: number) {
 
   const rect = leaflet.rectangle(bounds);
   rect.addTo(map);
+
+  //const coin = new Coin(lat, lng, Math.floor(luck([i, j, "initialValue"].toString()) * 100));
 
   rect.bindPopup(() => {
     // Each cache has a random point value, mutable by the player
@@ -143,6 +152,7 @@ function spawnCache(i: number, j: number) {
     return popupDiv;
   });
 }
+
 for (let i = -NEIGHBORHOOD_SIZE; i < NEIGHBORHOOD_SIZE; i++) {
   for (let j = -NEIGHBORHOOD_SIZE; j < NEIGHBORHOOD_SIZE; j++) {
     if (luck([i, j].toString()) < CACHE_SPAWN_PROBABILITY) {

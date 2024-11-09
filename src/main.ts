@@ -3,30 +3,23 @@ import leaflet from "leaflet";
 //test commit comment
 console.log("test\n");
 
-
 // Style sheets
 import "leaflet/dist/leaflet.css";
-
 
 // Fix missing marker images
 import "./leafletWorkaround.ts";
 
-
 import "./style.css";
-
 
 // Deterministic random number generator
 import luck from "./luck.ts";
 
-
 const OAKES_CLASSROOM = leaflet.latLng(36.98949379578401, -122.06277128548504);
-
 
 const GAMEPLAY_ZOOM_LEVEL = 19;
 const TILE_DEGREES = 1e-4;
 const NEIGHBORHOOD_SIZE = 8;
 const CACHE_SPAWN_PROBABILITY = 0.1;
-
 
 const map = leaflet.map(document.getElementById("map")!, {
   center: OAKES_CLASSROOM,
@@ -37,7 +30,6 @@ const map = leaflet.map(document.getElementById("map")!, {
   scrollWheelZoom: false,
 });
 
-
 leaflet
   .tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
@@ -46,18 +38,14 @@ leaflet
   })
   .addTo(map);
 
-
 const playerMarker = leaflet.marker(OAKES_CLASSROOM);
 playerMarker.bindTooltip("Player");
 playerMarker.addTo(map);
 
-
 let playerPoints = 0;
 const statusPanel = document.querySelector<HTMLDivElement>("#statusPanel")!;
 
-
 statusPanel.innerHTML = "You have 0 point";
-
 
 // Cache Loactions
 /*class cacheLocations {
@@ -70,9 +58,8 @@ statusPanel.innerHTML = "You have 0 point";
       return newLocation;
     }
     return cacheLocations.cacheLocationMap.get(key)!;
-  }
-}*/
 
+}*/
 
 function spawnCache(i: number, j: number) {
   const origin = OAKES_CLASSROOM;
@@ -81,15 +68,12 @@ function spawnCache(i: number, j: number) {
     [origin.lat + (i + 1) * TILE_DEGREES, origin.lng + (j + 1) * TILE_DEGREES],
   ]);
 
-
   const rect = leaflet.rectangle(bounds);
   rect.addTo(map);
-
 
   rect.bindPopup(() => {
     // Each cache has a random point value, mutable by the player
     let pointValue = Math.floor(luck([i, j, "initialValue"].toString()) * 100);
-
 
     // The popup offers a description and button
     const popupDiv = document.createElement("div");
@@ -97,7 +81,6 @@ function spawnCache(i: number, j: number) {
       <div>There is a cache here at "${i},${j}". It has value <span id="value">${pointValue}</span>.</div>
       <button id="collect">Collect</button>
       <button id="deposit">Deposit</button>`;
-
 
     // Collect Button and updating text for collection
     popupDiv
@@ -108,12 +91,13 @@ function spawnCache(i: number, j: number) {
         popupDiv.querySelector<HTMLSpanElement>("#value")!.innerHTML =
           pointValue.toString();
         if (playerPoints == 1) {
-          statusPanel.innerHTML = `You have ${playerPoints} point. Collect more around the map and deposit them too!`;
+          statusPanel.innerHTML =
+            `You have ${playerPoints} point. Collect more around the map and deposit them too!`;
         } else {
-          statusPanel.innerHTML = `You have ${playerPoints} points. Collect more around the map and deposit them too!`;
+          statusPanel.innerHTML =
+            `You have ${playerPoints} points. Collect more around the map and deposit them too!`;
         }
       });
-
 
     // Deposit Button and updating text for deposit
     popupDiv
@@ -126,12 +110,13 @@ function spawnCache(i: number, j: number) {
         if (playerPoints == 0) {
           statusPanel.innerHTML = `You have ${playerPoints} points.`;
         } else if (playerPoints == 1) {
-          statusPanel.innerHTML = `You have ${playerPoints} point. Collect more around the map and deposit them too!`;
+          statusPanel.innerHTML =
+            `You have ${playerPoints} point. Collect more around the map and deposit them too!`;
         } else {
-          statusPanel.innerHTML = `You have ${playerPoints} points. Collect more around the map and deposit them too!`;
+          statusPanel.innerHTML =
+            `You have ${playerPoints} points. Collect more around the map and deposit them too!`;
         }
       });
-
 
     return popupDiv;
   });

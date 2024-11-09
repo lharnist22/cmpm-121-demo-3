@@ -59,29 +59,27 @@ class cacheLocations {
 }
 
 // Coin class and constructor
-/*class Coin {
+class Coin {
   id: string;
   lat: number;
   lng: number;
   value: number;
 
+  // Constructor here!!
+  constructor(lat: number, lng: number, value: number) {
+    this.id = this.randomID(lat, lng);
+    this.lat = lat;
+    this.lng = lng;
+    this.value = value;
+  }
 
-
-
-// Constructor here!!
-constructor(lat: number, lng: number, value: number){
-  this.id = this.randomID(lat, lng);
-  this.lat = lat;
-  this.lng = lng;
-  this.value = value;
+  //Need to first write function to randomize the IDs
+  private randomID(lat: number, lng: number): string {
+    return `coin-${lat.toFixed(4)}-${lng.toFixed(4)}-${
+      Math.random().toString(36).substr(2, 9)
+    }`;
+  }
 }
-
-
-//Need to first write function to randomize the IDs
-private randomID(lat: number, lng: number): string{
-  return `coin-${lat.toFixed(4)}-${lng.toFixed(4)}-${Math.random().toString(36).substr(2, 9)}`;
-}
-}*/
 
 // Rewrite this for appropriate class of cacheLocations (CHANGE THIS LATER!)
 function spawnCache(i: number, j: number) {
@@ -100,65 +98,58 @@ function spawnCache(i: number, j: number) {
   const rect = leaflet.rectangle(bounds);
   rect.addTo(map);
 
-  //const coin = new Coin(lat, lng, Math.floor(luck([i, j, "initialValue"].toString()) * 100));
+  const coin = new Coin(
+    lat,
+    lng,
+    Math.floor(luck([i, j, "initialValue"].toString()) * 100),
+  );
+
+  //Need to rewrite this to work properly
   rect.bindPopup(() => {
     // Each cache has a random point value, mutable by the player
-    let pointValue = Math.floor(luck([i, j, "initialValue"].toString()) * 100);
-
-    // The popup offers a description and button
     const popupDiv = document.createElement("div");
     popupDiv.innerHTML = `
-      <div>There is a cache here at "${i},${j}". It has value <span id="value">${pointValue}</span>.</div>
+      <div>There is a cache here at "${i},${j}". The ID of this coin is: ${coin.id}.<span id="value">${coin.value} Remember it! </span>.</div>
       <button id="collect">Collect</button>
       <button id="deposit">Deposit</button>`;
 
     // Collect Button and updating text for collection
-    popupDiv
-      .querySelector<HTMLButtonElement>("#collect")!
-      .addEventListener("click", () => {
-        pointValue--;
+    popupDiv.querySelector<HTMLButtonElement>("#collect")!.addEventListener(
+      "click",
+      () => {
+        coin.value--;
         playerPoints++;
-        popupDiv.querySelector<HTMLSpanElement>("#value")!.innerHTML =
-          pointValue.toString();
-        if (playerPoints == 1) {
-          statusPanel.innerHTML =
-            `You have ${playerPoints} point. Collect more around the map and deposit them too!`;
-        } else {
-          statusPanel.innerHTML =
-            `You have ${playerPoints} points. Collect more around the map and deposit them too!`;
-        }
-      });
+        popupDiv.querySelector<HTMLSpanElement>("#value")!.innerHTML = coin
+          .value.toString();
+        updateStatusPanel();
+      },
+    );
 
     // Deposit Button and updating text for deposit
-    popupDiv
-      .querySelector<HTMLButtonElement>("#deposit")!
-      .addEventListener("click", () => {
-        pointValue++;
+    popupDiv.querySelector<HTMLButtonElement>("#deposit")!.addEventListener(
+      "click",
+      () => {
+        coin.value++;
         playerPoints--;
-        popupDiv.querySelector<HTMLSpanElement>("#value")!.innerHTML =
-          pointValue.toString();
-        if (playerPoints == 0) {
-          statusPanel.innerHTML = `You have ${playerPoints} points.`;
-        } else if (playerPoints == 1) {
-          statusPanel.innerHTML =
-            `You have ${playerPoints} point. Collect more around the map and deposit them too!`;
-        } else {
-          statusPanel.innerHTML =
-            `You have ${playerPoints} points. Collect more around the map and deposit them too!`;
-        }
-      });
+        popupDiv.querySelector<HTMLSpanElement>("#value")!.innerHTML = coin
+          .value.toString();
+        updateStatusPanel();
+      },
+    );
 
     return popupDiv;
   });
 }
 
-/*function updateStatusPanel() {
+function updateStatusPanel() {
   if (playerPoints == 1) {
-    statusPanel.innerHTML = `You have ${playerPoints} point. Collect more around the map and deposit them too!`;
+    statusPanel.innerHTML =
+      `You have ${playerPoints} point. Collect more around the map and deposit them too!`;
   } else {
-    statusPanel.innerHTML = `You have ${playerPoints} points. Collect more around the map and deposit them too!`;
+    statusPanel.innerHTML =
+      `You have ${playerPoints} points. Collect more around the map and deposit them too!`;
   }
-  }*/
+}
 
 for (let i = -NEIGHBORHOOD_SIZE; i < NEIGHBORHOOD_SIZE; i++) {
   for (let j = -NEIGHBORHOOD_SIZE; j < NEIGHBORHOOD_SIZE; j++) {

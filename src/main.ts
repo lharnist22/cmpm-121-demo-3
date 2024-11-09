@@ -1,8 +1,5 @@
 import leaflet from "leaflet";
 
-//test commit comment
-console.log("test\n");
-
 // Style sheets
 import "leaflet/dist/leaflet.css";
 
@@ -49,7 +46,7 @@ statusPanel.innerHTML = "You have 0 points";
 
 // Cache Loactions
 /*class cacheLocations {
-  private static cacheLocationMap: Map<string, leaflet.LatLng> = new Map();
+  private static cacheLocationMap: Map<string, leaflet.latLng> = new Map();
   public static getCacheLocation(lat: number, lng: number): leaflet.LatLng {
     const key = `${lat}, ${lng}`;
     if (!cacheLocations.cacheLocationMap.has(key)) {
@@ -58,7 +55,32 @@ statusPanel.innerHTML = "You have 0 points";
       return newLocation;
     }
     return cacheLocations.cacheLocationMap.get(key)!;
+  }
+}*/
 
+// Coin class and constructor
+/*class Coin {
+  id: string;
+  lat: number;
+  lng: number;
+  value: number;
+
+
+
+
+// Constructor here!!
+constructor(lat: number, lng: number, value: number){
+  this.id = this.randomID(lat, lng);
+  this.lat = lat;
+  this.lng = lng;
+  this.value = value;
+}
+
+
+//Need to first write function to randomize the IDs
+private randomID(lat: number, lng: number): string{
+  return `coin-${lat.toFixed(4)}-${lng.toFixed(4)}-${Math.random().toString(36).substr(2, 9)}`;
+}
 }*/
 
 function spawnCache(i: number, j: number) {

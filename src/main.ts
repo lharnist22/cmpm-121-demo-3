@@ -56,7 +56,7 @@ let playerPoints = 0;
 const statusPanel = document.querySelector<HTMLDivElement>("#statusPanel")!;
 
 
-statusPanel.innerHTML = "You have 0 points";
+statusPanel.innerHTML = "You have 0 point";
 
 
 // Cache Loactions

@@ -60,16 +60,16 @@ statusPanel.innerHTML = "You have 0 point";
 
 
 // Cache Loactions
-class cacheLocations {
+class CacheLocations {
   private static cacheLocationMap: Map<string, leaflet.LatLng> = new Map();
   public static getCacheLocation(lat: number, lng: number): leaflet.LatLng {
     const key = `${lat}, ${lng}`;
-    if (!cacheLocations.cacheLocationMap.has(key)) {
+    if (!CacheLocations.cacheLocationMap.has(key)) {
       const newLocation = leaflet.latLng(lat, lng);
-      cacheLocations.cacheLocationMap.set(key, newLocation);
+      CacheLocations.cacheLocationMap.set(key, newLocation);
       return newLocation;
     }
-    return cacheLocations.cacheLocationMap.get(key)!;
+    return CacheLocations.cacheLocationMap.get(key)!;
   }
 }
 

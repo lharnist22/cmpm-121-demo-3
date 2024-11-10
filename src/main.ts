@@ -82,7 +82,7 @@ class Coin {
 }
 
 //Player Class and Constructor
-class Player {
+/*class Player {
   x: number;
   y: number;
 
@@ -154,7 +154,7 @@ class Memento {
           cacheStates: this.cacheStates,
       };
   }
-}
+}*/
 
 
 // Rewrite this for appropriate class of cacheLocations (CHANGE THIS LATER!)

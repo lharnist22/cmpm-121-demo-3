@@ -83,6 +83,7 @@ class Coin {
 
 //Player Class and Constructor
 /*class Player {
+console.log("test");
   x: number;
   y: number;
 

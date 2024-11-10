@@ -157,7 +157,6 @@ class Memento {
   }
 }*/
 
-
 // Rewrite this for appropriate class of cacheLocations (CHANGE THIS LATER!)
 function spawnCache(i: number, j: number) {
   const origin = OAKES_CLASSROOM;

@@ -82,7 +82,7 @@ class Coin {
 }
 
 //Player Class and Constructor
-class Player {
+/*class Player {
   x: number;
   y: number;
 
@@ -110,7 +110,7 @@ class Player {
   getPosition(): { x: number; y: number } {
       return { x: this.x, y: this.y };
   }
-}
+}*/
 
 // Rewrite this for appropriate class of cacheLocations (CHANGE THIS LATER!)
 function spawnCache(i: number, j: number) {

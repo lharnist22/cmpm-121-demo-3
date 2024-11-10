@@ -82,7 +82,7 @@ class Coin {
 }
 
 //Player Class and Constructor
-/*class Player {
+class Player {
   x: number;
   y: number;
 
@@ -110,7 +110,52 @@ class Coin {
   getPosition(): { x: number; y: number } {
       return { x: this.x, y: this.y };
   }
-}*/
+}
+
+class Cache {
+  id: number;
+  x: number;
+  y: number;
+  collected: boolean;
+
+  constructor(id: number, x: number, y: number, collected = false) {
+      this.id = id;
+      this.x = x;
+      this.y = y;
+      this.collected = collected;
+  }
+
+  collect(): void {
+      this.collected = true;
+  }
+
+  getState(): { id: number; x: number; y: number; collected: boolean } {
+      return {
+          id: this.id,
+          x: this.x,
+          y: this.y,
+          collected: this.collected,
+      };
+  }
+}
+
+class Memento {
+  playerState: string;
+  cacheStates: string[];
+
+  constructor(playerState: string, cacheStates: string[]) {
+      this.playerState = playerState;
+      this.cacheStates = cacheStates;
+  }
+
+  getState(): { playerState: string; cacheStates: string[] } {
+      return {
+          playerState: this.playerState,
+          cacheStates: this.cacheStates,
+      };
+  }
+}
+
 
 // Rewrite this for appropriate class of cacheLocations (CHANGE THIS LATER!)
 function spawnCache(i: number, j: number) {

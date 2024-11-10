@@ -76,8 +76,39 @@ class Coin {
   //Need to first write function to randomize the IDs
   private randomID(lat: number, lng: number): string {
     return `coin-${lat.toFixed(4)}-${lng.toFixed(4)}-${
-      Math.random().toString(36).substr(2, 9)
+      Math.random().toString(36)
     }`;
+  }
+}
+
+//Player Class and Constructor
+class Player {
+  x: number;
+  y: number;
+
+  constructor(x: number, y: number) {
+      this.x = x;
+      this.y = y;
+  }
+
+  moveUp(): void {
+      this.y -= 1;
+  }
+
+  moveDown(): void {
+      this.y += 1;
+  }
+
+  moveLeft(): void {
+      this.x -= 1;
+  }
+
+  moveRight(): void {
+      this.x += 1;
+  }
+
+  getPosition(): { x: number; y: number } {
+      return { x: this.x, y: this.y };
   }
 }
 

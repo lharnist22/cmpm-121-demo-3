@@ -17,8 +17,6 @@ const GAMEPLAY_ZOOM_LEVEL = 19;
 const TILE_DEGREES = 1e-4;
 const NEIGHBORHOOD_SIZE = 8;
 const CACHE_SPAWN_PROBABILITY = 0.1;
-
-const cellCache = new Map<string, Cell>();
 const cacheMementos = new Map<string, { pointValue: number; coins: Coin[] }>();
 
 interface Cell {
@@ -220,6 +218,7 @@ function spawnCache(i: number, j: number) {
         coin.value--;
         playerPoints++;
         popupDiv.querySelector<HTMLSpanElement>("#value")!.innerHTML = coin.value.toString();
+        statusPanel.innerHTML = `Collected coin ${coin.value.toString()}. Total points: ${playerPoints}`;
         updateStatusPanel();
         updateCoinList();
       }
@@ -231,6 +230,7 @@ function spawnCache(i: number, j: number) {
         coin.value++;
         playerPoints--;
         popupDiv.querySelector<HTMLSpanElement>("#value")!.innerHTML = coin.value.toString();
+        statusPanel.innerHTML = `Collected coin ${coin.value.toString()}. Total points: ${playerPoints}`;
         updateStatusPanel();
       }
     );

@@ -18,6 +18,32 @@ const TILE_DEGREES = 1e-4;
 const NEIGHBORHOOD_SIZE = 8;
 const CACHE_SPAWN_PROBABILITY = 0.1;
 
+const cellCache = new Map<string, Cell>();
+const cacheMementos = new Map<string, { pointValue: number; coins: Coin[] }>();
+
+interface Cell {
+  i: number;
+  j: number;
+  rectangle: leaflet.Rectangle;
+  coins: Coin[];
+}
+
+const collectedCoins: Coin[] = [];
+
+interface Coin {
+  i: number;
+  j: number;
+  serial: number;
+}
+
+const playerPosition = JSON.parse(
+  localStorage.getItem("playerPosition") ||
+    JSON.stringify({
+      lat: OAKES_CLASSROOM.lat,
+      lng: OAKES_CLASSROOM.lng,
+    })
+);
+
 const map = leaflet.map(document.getElementById("map")!, {
   center: OAKES_CLASSROOM,
   zoom: GAMEPLAY_ZOOM_LEVEL,
@@ -35,7 +61,7 @@ leaflet
   })
   .addTo(map);
 
-const playerMarker = leaflet.marker(OAKES_CLASSROOM);
+const playerMarker = leaflet.marker(playerPosition);
 playerMarker.bindTooltip("Player");
 playerMarker.addTo(map);
 
@@ -44,17 +70,17 @@ const statusPanel = document.querySelector<HTMLDivElement>("#statusPanel")!;
 
 statusPanel.innerHTML = "You have 0 points";
 
-// Cache Loactions
-class cacheLocations {
-  private static cacheLocationMap: Map<string, leaflet.latLng> = new Map();
+// Cache Locations
+class CacheLocations {
+  private static cacheLocationMap: Map<string, leaflet.LatLng> = new Map();
   public static getCacheLocation(lat: number, lng: number): leaflet.LatLng {
-    const key = `${lat}, ${lng}`;
-    if (!cacheLocations.cacheLocationMap.has(key)) {
+    const key = `${lat},${lng}`;
+    if (!CacheLocations.cacheLocationMap.has(key)) {
       const newLocation = leaflet.latLng(lat, lng);
-      cacheLocations.cacheLocationMap.set(key, newLocation);
+      CacheLocations.cacheLocationMap.set(key, newLocation);
       return newLocation;
     }
-    return cacheLocations.cacheLocationMap.get(key)!;
+    return CacheLocations.cacheLocationMap.get(key)!;
   }
 }
 
@@ -65,7 +91,6 @@ class Coin {
   lng: number;
   value: number;
 
-  // Constructor here!!
   constructor(lat: number, lng: number, value: number) {
     this.id = this.randomID(lat, lng);
     this.lat = lat;
@@ -73,97 +98,97 @@ class Coin {
     this.value = value;
   }
 
-  //Need to first write function to randomize the IDs
   private randomID(lat: number, lng: number): string {
     return `coin-${lat.toFixed(4)}-${lng.toFixed(4)}-${
-      Math.random().toString(36)
+      Math.random().toString(36).substring(2)
     }`;
   }
 }
 
-//Player Class and Constructor
-/*class Player {
-console.log("test");
-  x: number;
-  y: number;
-
-  constructor(x: number, y: number) {
-      this.x = x;
-      this.y = y;
-  }
-
-  moveUp(): void {
-      this.y -= 1;
-  }
-
-  moveDown(): void {
-      this.y += 1;
-  }
-
-  moveLeft(): void {
-      this.x -= 1;
-  }
-
-  moveRight(): void {
-      this.x += 1;
-  }
-
-  getPosition(): { x: number; y: number } {
-      return { x: this.x, y: this.y };
-  }
-}
-
-class Cache {
-  id: number;
-  x: number;
-  y: number;
-  collected: boolean;
-
-  constructor(id: number, x: number, y: number, collected = false) {
-      this.id = id;
-      this.x = x;
-      this.y = y;
-      this.collected = collected;
-  }
-
-  collect(): void {
-      this.collected = true;
-  }
-
-  getState(): { id: number; x: number; y: number; collected: boolean } {
-      return {
-          id: this.id,
-          x: this.x,
-          y: this.y,
-          collected: this.collected,
-      };
-  }
-}
-
-class Memento {
-  playerState: string;
+// Memento pattern for saving/restoring game state
+class GameStateMemento {
+  playerState: { lat: number; lng: number };
   cacheStates: string[];
 
-  constructor(playerState: string, cacheStates: string[]) {
-      this.playerState = playerState;
-      this.cacheStates = cacheStates;
+  constructor(playerState: { lat: number; lng: number }, cacheStates: string[]) {
+    this.playerState = playerState;
+    this.cacheStates = cacheStates;
   }
 
-  getState(): { playerState: string; cacheStates: string[] } {
-      return {
-          playerState: this.playerState,
-          cacheStates: this.cacheStates,
-      };
+  getState() {
+    return {
+      playerState: this.playerState,
+      cacheStates: this.cacheStates,
+    };
   }
-}*/
+}
 
-// Rewrite this for appropriate class of cacheLocations (CHANGE THIS LATER!)
+// Move player marker
+function movePlayer(latOffset: number, lngOffset: number) {
+  playerPosition.lat += latOffset * TILE_DEGREES;
+  playerPosition.lng += lngOffset * TILE_DEGREES;
+  playerMarker.setLatLng(playerPosition);
+  map.panTo(playerPosition);
+  saveGameState();
+}
+
+// Save game state
+function saveGameState() {
+  const memento = new GameStateMemento(
+    { lat: playerPosition.lat, lng: playerPosition.lng },
+    Array.from(cacheMementos.keys())
+  );
+  localStorage.setItem("gameState", JSON.stringify(memento.getState()));
+}
+
+// Restore game state
+function restoreGameState() {
+  const savedState = JSON.parse(localStorage.getItem("gameState") || "{}");
+  if (savedState.playerState) {
+    playerPosition.lat = savedState.playerState.lat;
+    playerPosition.lng = savedState.playerState.lng;
+    playerMarker.setLatLng(playerPosition);
+    map.panTo(playerPosition);
+  }
+  if (savedState.cacheStates) {
+    savedState.cacheStates.forEach((cacheKey: string) => {
+      const [lat, lng] = cacheKey.split(",").map(Number);
+      spawnCache(lat, lng);
+    });
+  }
+}
+
+function updateCoinList() {
+  const coinList = document.querySelector<HTMLDivElement>("#coinList")!;
+  const coinListHeader = document.querySelector<HTMLDivElement>("#coinListHeader")!;
+
+  if (collectedCoins.length === 0) {
+    coinList.innerHTML = "No collected coins yet.";
+    coinList.style.display = "none";
+  } else {
+    coinList.style.display = "block";
+    coinList.innerHTML = collectedCoins
+      .map(
+        (coin) =>
+          `<div>Coin ID: ${coin.id}, Value: ${coin.value}, Location: (${coin.lat.toFixed(
+            4
+          )}, ${coin.lng.toFixed(4)})</div>`
+      )
+      .join("");
+  }
+
+  coinListHeader.addEventListener("click", () => {
+    coinList.style.display = coinList.style.display === "none" ? "block" : "none";
+  });
+}
+
+// Spawn cache
 function spawnCache(i: number, j: number) {
   const origin = OAKES_CLASSROOM;
   const lat = origin.lat + i * TILE_DEGREES;
   const lng = origin.lng + j * TILE_DEGREES;
 
-  const cacheLocation = cacheLocations.getCacheLocation(lat, lng);
+  const cacheLocation = CacheLocations.getCacheLocation(lat, lng);
   console.log(cacheLocation);
 
   const bounds = leaflet.latLngBounds([
@@ -177,56 +202,62 @@ function spawnCache(i: number, j: number) {
   const coin = new Coin(
     lat,
     lng,
-    Math.floor(luck([i, j, "initialValue"].toString()) * 100),
+    Math.floor(luck([i, j, "initialValue"].toString()) * 100)
   );
 
-  //Need to rewrite this to work properly
+  cacheMementos.set(`${lat},${lng}`, { pointValue: coin.value, coins: [] });
+
   rect.bindPopup(() => {
-    // Each cache has a random point value, mutable by the player
     const popupDiv = document.createElement("div");
     popupDiv.innerHTML = `
-      <div>There is a cache here at "${i},${j}". The ID of this coin is: ${coin.id}.<span id="value">${coin.value} Remember it! </span>.</div>
+      <div>Cache at "${i},${j}". ID: ${coin.id}. Value: <span id="value">${coin.value}</span>.</div>
       <button id="collect">Collect</button>
       <button id="deposit">Deposit</button>`;
 
-    // Collect Button and updating text for collection
     popupDiv.querySelector<HTMLButtonElement>("#collect")!.addEventListener(
       "click",
       () => {
         coin.value--;
         playerPoints++;
-        popupDiv.querySelector<HTMLSpanElement>("#value")!.innerHTML = coin
-          .value.toString();
+        popupDiv.querySelector<HTMLSpanElement>("#value")!.innerHTML = coin.value.toString();
         updateStatusPanel();
-      },
+        updateCoinList();
+      }
     );
 
-    // Deposit Button and updating text for deposit
     popupDiv.querySelector<HTMLButtonElement>("#deposit")!.addEventListener(
       "click",
       () => {
         coin.value++;
         playerPoints--;
-        popupDiv.querySelector<HTMLSpanElement>("#value")!.innerHTML = coin
-          .value.toString();
+        popupDiv.querySelector<HTMLSpanElement>("#value")!.innerHTML = coin.value.toString();
         updateStatusPanel();
-      },
+      }
     );
 
     return popupDiv;
   });
 }
 
+// Update the status panel
 function updateStatusPanel() {
-  if (playerPoints == 1) {
-    statusPanel.innerHTML =
-      `You have ${playerPoints} point. Collect more around the map and deposit them too!`;
-  } else {
-    statusPanel.innerHTML =
-      `You have ${playerPoints} points. Collect more around the map and deposit them too!`;
-  }
+  statusPanel.innerHTML =
+    playerPoints > 1
+      ? `You have ${playerPoints} coin.`
+      : `You have ${playerPoints} coins.`;
 }
 
+// Button controls
+document.getElementById("north")!.addEventListener("click", () => movePlayer(-1, 0));
+document.getElementById("south")!.addEventListener("click", () => movePlayer(1, 0));
+document.getElementById("west")!.addEventListener("click", () => movePlayer(0, -1));
+document.getElementById("east")!.addEventListener("click", () => movePlayer(0, 1));
+document.getElementById("reset")!.addEventListener("click", restoreGameState);
+
+// Restore game state on load
+restoreGameState();
+
+// Spawn caches
 for (let i = -NEIGHBORHOOD_SIZE; i < NEIGHBORHOOD_SIZE; i++) {
   for (let j = -NEIGHBORHOOD_SIZE; j < NEIGHBORHOOD_SIZE; j++) {
     if (luck([i, j].toString()) < CACHE_SPAWN_PROBABILITY) {

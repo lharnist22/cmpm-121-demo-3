@@ -1,22 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    </head>
-    <body>
-        <div id="app">
-            <div id="controlPanel">
-                <button id="sensor" title="sensor">🌐</button>
-                <button id="north" title="north">⬆️</button>
-                <button id="south" title="south">⬇️</button>
-                <button id="west" title="west">⬅️</button>
-                <button id="east" title="east">➡️</button>
-                <button id="reset" title="reset">🚮</button>
-            </div>
-            <div id="statusPanel"></div>
-            <div id="map"></div>
-        </div>
-        <script type="module" src="/src/main.ts"></script>
-    </body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cache Game</title>
+    <style>
+      #map {
+        height: 400px;
+        margin: 20px auto;
+      }
+      #controlPanel,
+      #statusPanel,
+      #coinListContainer {
+        margin: 10px;
+        padding: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div id="controlPanel">
+        <button id="sensor" title="sensor">🌐</button>
+        <button id="north" title="north">⬆️</button>
+        <button id="south" title="south">⬇️</button>
+        <button id="west" title="west">⬅️</button>
+        <button id="east" title="east">➡️</button>
+        <button id="reset" title="reset">🚮</button>
+      </div>
+      <div id="statusPanel"></div>
+      <div id="coinListContainer">
+        <div id="coinListHeader">Collected Coins ▼</div>
+        <div id="coinList" style="display: none;">No collected coins yet.</div>
+      </div>
+      <div id="map"></div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
 </html>

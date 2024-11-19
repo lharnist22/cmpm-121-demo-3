@@ -39,7 +39,7 @@ const playerPosition = JSON.parse(
     JSON.stringify({
       lat: OAKES_CLASSROOM.lat,
       lng: OAKES_CLASSROOM.lng,
-    })
+    }),
 );
 
 const map = leaflet.map(document.getElementById("map")!, {
@@ -108,7 +108,10 @@ class GameStateMemento {
   playerState: { lat: number; lng: number };
   cacheStates: string[];
 
-  constructor(playerState: { lat: number; lng: number }, cacheStates: string[]) {
+  constructor(
+    playerState: { lat: number; lng: number },
+    cacheStates: string[],
+  ) {
     this.playerState = playerState;
     this.cacheStates = cacheStates;
   }
@@ -134,7 +137,7 @@ function movePlayer(latOffset: number, lngOffset: number) {
 function saveGameState() {
   const memento = new GameStateMemento(
     { lat: playerPosition.lat, lng: playerPosition.lng },
-    Array.from(cacheMementos.keys())
+    Array.from(cacheMementos.keys()),
   );
   localStorage.setItem("gameState", JSON.stringify(memento.getState()));
 }
@@ -158,25 +161,30 @@ function restoreGameState() {
 
 function updateCoinList() {
   const coinList = document.querySelector<HTMLDivElement>("#coinList")!;
-  const coinListHeader = document.querySelector<HTMLDivElement>("#coinListHeader")!;
+  const coinListHeader = document.querySelector<HTMLDivElement>(
+    "#coinListHeader",
+  )!;
 
   if (collectedCoins.length === 0) {
-    coinList.innerHTML = "No collected coins yet.";
     coinList.style.display = "none";
   } else {
     coinList.style.display = "block";
     coinList.innerHTML = collectedCoins
       .map(
         (coin) =>
-          `<div>Coin ID: ${coin.id}, Value: ${coin.value}, Location: (${coin.lat.toFixed(
-            4
-          )}, ${coin.lng.toFixed(4)})</div>`
+          `<div>Coin ID: ${coin.id}, Value: ${coin.value}, Location: (${
+            coin.lat.toFixed(
+              4,
+            )
+          }, ${coin.lng.toFixed(4)})</div>`,
       )
       .join("");
   }
 
   coinListHeader.addEventListener("click", () => {
-    coinList.style.display = coinList.style.display === "none" ? "block" : "none";
+    coinList.style.display = coinList.style.display === "none"
+      ? "block"
+      : "none";
   });
 }
 
@@ -200,7 +208,7 @@ function spawnCache(i: number, j: number) {
   const coin = new Coin(
     lat,
     lng,
-    Math.floor(luck([i, j, "initialValue"].toString()) * 100)
+    Math.floor(luck([i, j, "initialValue"].toString()) * 100),
   );
 
   cacheMementos.set(`${lat},${lng}`, { pointValue: coin.value, coins: [] });
@@ -217,11 +225,13 @@ function spawnCache(i: number, j: number) {
       () => {
         coin.value--;
         playerPoints++;
-        popupDiv.querySelector<HTMLSpanElement>("#value")!.innerHTML = coin.value.toString();
-        statusPanel.innerHTML = `Collected coin ${coin.value.toString()}. Total points: ${playerPoints}`;
+        popupDiv.querySelector<HTMLSpanElement>("#value")!.innerHTML = coin
+          .value.toString();
+        statusPanel.innerHTML =
+          `Collected coin ${coin.value.toString()}. Total points: ${playerPoints}`;
         updateStatusPanel();
         updateCoinList();
-      }
+      },
     );
 
     popupDiv.querySelector<HTMLButtonElement>("#deposit")!.addEventListener(
@@ -229,10 +239,12 @@ function spawnCache(i: number, j: number) {
       () => {
         coin.value++;
         playerPoints--;
-        popupDiv.querySelector<HTMLSpanElement>("#value")!.innerHTML = coin.value.toString();
-        statusPanel.innerHTML = `Collected coin ${coin.value.toString()}. Total points: ${playerPoints}`;
+        popupDiv.querySelector<HTMLSpanElement>("#value")!.innerHTML = coin
+          .value.toString();
+        statusPanel.innerHTML =
+          `Collected coin ${coin.value.toString()}. Total points: ${playerPoints}`;
         updateStatusPanel();
-      }
+      },
     );
 
     return popupDiv;
@@ -241,18 +253,36 @@ function spawnCache(i: number, j: number) {
 
 // Update the status panel
 function updateStatusPanel() {
-  statusPanel.innerHTML =
-    playerPoints > 1
-      ? `You have ${playerPoints} coin.`
-      : `You have ${playerPoints} coins.`;
+  statusPanel.innerHTML = playerPoints > 1
+    ? `You have ${playerPoints} coin.`
+    : `You have ${playerPoints} coins.`;
 }
 
-// Button controls
-document.getElementById("north")!.addEventListener("click", () => movePlayer(-1, 0));
-document.getElementById("south")!.addEventListener("click", () => movePlayer(1, 0));
-document.getElementById("west")!.addEventListener("click", () => movePlayer(0, -1));
-document.getElementById("east")!.addEventListener("click", () => movePlayer(0, 1));
-document.getElementById("reset")!.addEventListener("click", restoreGameState);
+// Button control
+document.getElementById("north")!.addEventListener(
+  "click",
+  () => movePlayer(-1, 0),
+);
+
+document.getElementById("south")!.addEventListener(
+  "click",
+  () => movePlayer(1, 0),
+);
+
+document.getElementById("west")!.addEventListener(
+  "click",
+  () => movePlayer(0, -1),
+);
+
+document.getElementById("east")!.addEventListener(
+  "click",
+  () => movePlayer(0, 1),
+);
+
+document.getElementById("reset")!.addEventListener(
+  "click",
+  restoreGameState,
+);
 
 // Restore game state on load
 restoreGameState();

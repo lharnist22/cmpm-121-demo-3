@@ -201,10 +201,16 @@ function spawnCache(i: number, j: number) {
 
   // Utility function for generating Coin IDs
   function generateCoinID(lat: number, lng: number): string {
-    return `coin-${lat.toFixed(4)}-${lng.toFixed(4)}-${Math.random().toString(36).substring(2)}`;
+    return `coin-${lat.toFixed(4)}-${lng.toFixed(4)}-${
+      Math.random().toString(36).substring(2)
+    }`;
   }
-  
-  const coin = new Coin(lat, lng, Math.floor(luck([i, j, "initialValue"].toString()) * 100), generateCoinID(lat, lng));
+  const coin = new Coin(
+    lat,
+    lng,
+    Math.floor(luck([i, j, "initialValue"].toString()) * 100),
+    generateCoinID(lat, lng),
+  );
 
   cacheMementos.set(`${lat},${lng}`, { pointValue: coin.value, coins: [] });
 

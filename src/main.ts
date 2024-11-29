@@ -89,17 +89,11 @@ class Coin {
   lng: number;
   value: number;
 
-  constructor(lat: number, lng: number, value: number) {
-    this.id = this.randomID(lat, lng);
+  constructor(lat: number, lng: number, value: number, id: string) {
+    this.id = id;
     this.lat = lat;
     this.lng = lng;
     this.value = value;
-  }
-
-  private randomID(lat: number, lng: number): string {
-    return `coin-${lat.toFixed(4)}-${lng.toFixed(4)}-${
-      Math.random().toString(36).substring(2)
-    }`;
   }
 }
 
@@ -205,11 +199,12 @@ function spawnCache(i: number, j: number) {
   const rect = leaflet.rectangle(bounds);
   rect.addTo(map);
 
-  const coin = new Coin(
-    lat,
-    lng,
-    Math.floor(luck([i, j, "initialValue"].toString()) * 100),
-  );
+  // Utility function for generating Coin IDs
+  function generateCoinID(lat: number, lng: number): string {
+    return `coin-${lat.toFixed(4)}-${lng.toFixed(4)}-${Math.random().toString(36).substring(2)}`;
+  }
+  
+  const coin = new Coin(lat, lng, Math.floor(luck([i, j, "initialValue"].toString()) * 100), generateCoinID(lat, lng));
 
   cacheMementos.set(`${lat},${lng}`, { pointValue: coin.value, coins: [] });
 
@@ -261,12 +256,12 @@ function updateStatusPanel() {
 // Button control
 document.getElementById("north")!.addEventListener(
   "click",
-  () => movePlayer(-1, 0),
+  () => movePlayer(1, 0),
 );
 
 document.getElementById("south")!.addEventListener(
   "click",
-  () => movePlayer(1, 0),
+  () => movePlayer(-1, 0),
 );
 
 document.getElementById("west")!.addEventListener(
